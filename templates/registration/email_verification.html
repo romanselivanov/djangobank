@@ -1,0 +1,14 @@
+{% extends "email/base.html" %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Добро пожаловать в "Незаурядный Банк", {{ user.first_name }}</h1>
+
+    <p>Чтобы подтвердить адрес электронной почты, пожалуйста, перейдите по&nbsp;ссылке ниже:</p>
+
+    <a href="{{ url }}">{{ url }}</a>
+
+{% endblock %}

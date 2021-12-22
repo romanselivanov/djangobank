@@ -1,0 +1,78 @@
+<html>
+<style>
+    body, html {
+        background-color: rgba(249, 249, 249, 0);
+    }
+
+    h1 {
+        color: #00A9E0;
+        font-size: 24px;
+        line-height: 110%;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 110%;
+    }
+
+    a {
+        color: #00A9E0;
+    }
+
+    .content {
+        background-color: #fafafa;
+        border-radius: 32px;
+        padding: 2% 5% 2% 5%;
+    }
+
+    .footer {
+        padding-top: 25px;
+        min-height: 165px;
+        background-repeat: no-repeat;
+        background-position: bottom 10px right;
+
+    }
+
+    @media all and (max-width: 900px) {
+        .footer {
+            background-image: none;
+        }
+    }
+
+    .footer p {
+        font-size: 12px;
+        line-height: 110%;
+    }
+
+    {% block style %}{% endblock %}
+</style>
+<body>
+<div class="content">
+    {% block content %}{% endblock %}
+
+    <div class="footer">
+        <div style="height: 90px; max-width: 450px">
+            {% block unsubscribe %}
+                <p>
+                    Данное письмо сгенерировано автоматически. Просьба не&nbsp;отвечать на&nbsp;него. В&nbsp;случае
+                    возникновения вопросов, обращайтесь в&nbsp;Онлайн поддержку
+                </p>
+
+                <p>
+                    Отписаться от уведомлений можно в <a href="http://localhost:8000/profile/notification-settings/">личном
+                    кабинет</a>.
+                </p>
+            {% endblock %}
+        </div>
+
+        <div style="padding-top: 20px; font-size: 12px">
+            Московская обл, г. Москва,<br/>
+            Кремль<br/>
+            Тел.: 8 (800) 800-80-80<br/>
+            E-mail: <a href="mailto:info@testbank.ru">info@testbank.ru</a>
+        </div>
+        
+    </div>
+</div>
+</body>
+</html>
