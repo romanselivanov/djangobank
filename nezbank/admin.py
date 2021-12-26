@@ -3,6 +3,7 @@ from .models import User, Account, AccountType
 from django.contrib.auth.admin import UserAdmin
 from .forms import UserChangeForm, UserCreationForm
 
+
 @admin.register(User)
 class AccountAdmin(UserAdmin):
     # The forms to add and change user instances
@@ -24,9 +25,10 @@ class AccountAdmin(UserAdmin):
             'first_name', 
             'last_name', 
             'patronymic_name', 
-            'date_joined', 
-            'is_active',
+            'date_joined'
             )}),
+        ('Permissions', 
+        {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.

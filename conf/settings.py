@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -12,12 +13,13 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    
     'nezbank',
     'rest_framework',
+    'rest_framework.authtoken',
     'dj_rest_auth',
     'drf_yasg',
     'django_extensions',
-
     'django.contrib.admin',  
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -54,13 +56,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'conf.wsgi.application'
 
-# Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -91,9 +86,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEBUG = True
@@ -109,30 +101,37 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'nezbank.User'
-
-SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
-
-if SENTRY_DSN:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration()],
-
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production,
-        traces_sample_rate=1.0,
-
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'nezbank.serializers.LoginSerializer'
+    }
 
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'Bearer'
+SIMPLE_JWT = {
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
+    }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_VERIFICATION_URL = "http://localhost:8000/email-verification/"
 EMAIL_FROM = 'no-reply@testbank.ru'
+
+# SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
+# if SENTRY_DSN:
+#     import sentry_sdk
+#     from sentry_sdk.integrations.django import DjangoIntegration
+
+#     sentry_sdk.init(
+#         dsn=SENTRY_DSN,
+#         integrations=[DjangoIntegration()],
+
+#         # Set traces_sample_rate to 1.0 to capture 100%
+#         # of transactions for performance monitoring.
+#         # We recommend adjusting this value in production,
+#         traces_sample_rate=1.0,
+
+#         # If you wish to associate users to errors (assuming you are using
+#         # django.contrib.auth) you may enable sending PII data.
+#         send_default_pii=True,
+#     )

@@ -1,31 +1,43 @@
-from rest_framework.generics import GenericAPIView
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from nezbank.authutils import NezbankModelPermission
 from rest_framework.permissions import IsAuthenticated
+from .serializers import AccountSerializer, AccountTypeSerializer
+# from rest_framework.mixins import (
+#     ListModelMixin, CreateModelMixin, RetrieveModelMixin, 
+#     UpdateModelMixin, DestroyModelMixin
+# )
+from nezbank.models import Account, AccountType
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import DnaSerializer
-from rest_framework import status
+from rest_framework.generics import get_object_or_404
 
-class GetRoot(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = DnaSerializer
 
-    def get(self, request, format=None):
-        return Response("Hello world", status=status.HTTP_200_OK)
+class AccountsView(ModelViewSet):
+    serializers = {
+        'default' : AccountSerializer,
+        'accounttypes_list' : AccountTypeSerializer,
+        }
 
-    def post(self, request, format=None):       
-        dna = ("tgacccactaatcagcaacatagcactttgagcaaaggcctgtgttggagctattggccc"
-                "caaaactgcctttccctaaacagtgttcaccattgtagacctcaccactgttcgcgtaac"
-                "aactggcatgtcctgggggttaatactcac")
+    def get_queryset(self):
+        if self.action == 'accounttypes_list':
+            return AccountType.objects.all()
+        else:
+            return Account.objects.all()
 
-        serializer = DnaSerializer(data=request.data)
-        if serializer.is_valid():
-            userinput = str(request.data["dna"]).lower()
-            if not all(c.isalpha() for c in userinput):
-                return Response("DNA sequence contains only letters", status=status.HTTP_200_OK)
+    def get_permissions(self):
+        if self.action == 'accounttypes_list':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [NezbankModelPermission]
+        return [permission() for permission in permission_classes]
 
-            kodons = [dna[i:i+3] for i in range(0, len(dna), 3)]
-            # вариант поиска 1
-            if userinput in kodons:
-                return Response("DNA sequence found", status=status.HTTP_200_OK)                          
-            else:                    
-                return Response("DNA sequence not found", status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_serializer_class(self):
+        return self.serializers.get(
+            self.action,  self.serializers['default']
+        )
+
+    @action(methods=['get'], url_path='accountypes', detail=False)
+    def accounttypes_list(self, request, **kwargs):
+        accounttypes = self.get_queryset()
+        serializer = self.get_serializer(accounttypes, many=True)
+        return Response(serializer.data)

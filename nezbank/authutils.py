@@ -2,9 +2,10 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.hashers import make_password
-
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext
+from rest_framework.permissions import DjangoModelPermissions
+
 
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
@@ -49,7 +50,7 @@ class CustomUserManager(BaseUserManager):
 class PasswordCharsValidator:
     """
     Validate whether the password has upper, lower and digit.
-    """
+    """ 
     def validate(self, password, user=None):
 
         if not any(char.isdigit() for char in password):
@@ -69,3 +70,31 @@ class PasswordCharsValidator:
 
     def get_help_text(self):
         return gettext("Your password must contain at least character.",)
+
+
+class NezbankModelPermission(DjangoModelPermissions):
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
+        'HEAD': ['%(app_label)s.view_%(model_name)s'],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+    def has_permission(self, request, view):
+        groups = [group.name for group in request.user.groups.all()]
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        queryset = self._queryset(view)
+        perms = self.get_required_permissions(request.method, queryset.model)
+        if 'accounts_view_all' in groups:
+            return request.user.has_perms(perms)
+
+        if 'account_self' in groups and \
+            str(queryset)==str(queryset.filter(customer=request.user)):
+            return request.user.has_perms(perms)
+
+        return False

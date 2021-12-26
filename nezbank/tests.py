@@ -30,7 +30,10 @@ class UsersManagersTests(TestCase):
             phone='9005020', 
             password='FooPass500'
             )
-        account_type = AccountType.objects.create(currency='US Dollar', value=73.5)
+        account_type = AccountType.objects.create(
+            currency='US Dollar', 
+            value=73.5
+            )
         account = Account.objects.create(
             customer_id=customer, 
             description='test account', 

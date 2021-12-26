@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import DO_NOTHING
 from .authutils import CustomUserManager
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -17,15 +18,20 @@ class User(AbstractUser):
         _('phone'), 
         max_length=50, 
         unique=True, 
-        error_messages={'unique': _("A user with that phone already exists."),}
+        error_messages={'unique': _(
+            "A user with that phone already exists."),}
         )
 
     email = models.EmailField(
         _('email address'), 
         unique=True,
-        error_messages={'unique': _("A user with that email already exists."),}
+        error_messages={'unique': _("A user with that email already exists.")}
         )
-    patronymic_name = models.CharField(_('Отчество'), max_length=150, blank=True)
+    patronymic_name = models.CharField(
+        _('Отчество'),
+        max_length=150,
+        blank=True
+        )
     email_status = models.CharField(
         verbose_name='Статус email',
         max_length=32,
@@ -50,6 +56,7 @@ class User(AbstractUser):
 
 
 class AccountType(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     currency = models.CharField(max_length=50)
     value = models.FloatField()
 
@@ -58,11 +65,23 @@ class AccountType(models.Model):
 
 
 class Account(models.Model):
-    customer_id = models.ForeignKey(User, on_delete=DO_NOTHING)
-    description = models.CharField(max_length=250)
-    created_at = models.DateTimeField()
-    rate = models.FloatField()
-    type = models.ForeignKey(AccountType, on_delete=DO_NOTHING)
+    customer = models.ForeignKey(
+        User, 
+        related_name='accounts', 
+        on_delete=DO_NOTHING, 
+        verbose_name="Клиент"
+        )
+    description = models.CharField(max_length=250, verbose_name="Описание")
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Дата создания аккаунта"
+        )
+    rate = models.FloatField(verbose_name="Средств на счете")
+    type = models.ForeignKey(
+        AccountType,
+        on_delete=DO_NOTHING,
+        verbose_name="Тип валюты"
+        )
 
     def __str__(self):
-        return self.description
+        return self.customer.email
