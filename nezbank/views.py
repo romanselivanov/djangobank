@@ -1,22 +1,19 @@
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from nezbank.authutils import NezbankModelPermission
 from rest_framework.permissions import IsAuthenticated
 from .serializers import AccountSerializer, AccountTypeSerializer
-# from rest_framework.mixins import (
-#     ListModelMixin, CreateModelMixin, RetrieveModelMixin, 
-#     UpdateModelMixin, DestroyModelMixin
-# )
 from nezbank.models import Account, AccountType
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
+from .filters import AccountPermissionFilter
 
 
 class AccountsView(ModelViewSet):
     serializers = {
-        'default' : AccountSerializer,
-        'accounttypes_list' : AccountTypeSerializer,
+        'default': AccountSerializer,
+        'accounttypes_list': AccountTypeSerializer,
         }
+    filter_backends = (AccountPermissionFilter,)
 
     def get_queryset(self):
         if self.action == 'accounttypes_list':

@@ -15,15 +15,15 @@ class User(AbstractUser):
 
     username = None
     phone = models.CharField(
-        _('phone'), 
-        max_length=50, 
-        unique=True, 
+        _('phone'),
+        max_length=50,
+        unique=True,
         error_messages={'unique': _(
-            "A user with that phone already exists."),}
+            "A user with that phone already exists.")}
         )
 
     email = models.EmailField(
-        _('email address'), 
+        _('email address'),
         unique=True,
         error_messages={'unique': _("A user with that email already exists.")}
         )
@@ -51,14 +51,18 @@ class User(AbstractUser):
             if old_user.email != self.email:
                 self.email_status = self.EmailStatus.NOT_VERIFIED
                 super(User, self).save(**kwargs)
-                
+
         super(User, self).save(**kwargs)
 
 
 class AccountType(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    currency = models.CharField(max_length=50)
-    value = models.FloatField()
+    currency = models.CharField(max_length=50, verbose_name="Валюта")
+    value = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        verbose_name="Курс"
+        )
 
     def __str__(self):
         return self.currency
@@ -66,9 +70,9 @@ class AccountType(models.Model):
 
 class Account(models.Model):
     customer = models.ForeignKey(
-        User, 
-        related_name='accounts', 
-        on_delete=DO_NOTHING, 
+        User,
+        related_name='accounts',
+        on_delete=DO_NOTHING,
         verbose_name="Клиент"
         )
     description = models.CharField(max_length=250, verbose_name="Описание")
@@ -76,7 +80,10 @@ class Account(models.Model):
         default=timezone.now,
         verbose_name="Дата создания аккаунта"
         )
-    rate = models.FloatField(verbose_name="Средств на счете")
+    rate = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        verbose_name="Средств на счете")
     type = models.ForeignKey(
         AccountType,
         on_delete=DO_NOTHING,

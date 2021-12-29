@@ -3,8 +3,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 import random
 
+
 def generate_activation_code():
-    return int(''.join([str(random.randint(0,10)) for _ in range(6)]))
+    return int(''.join([str(random.randint(0, 10)) for _ in range(6)]))
+
 
 def send_email_verification(user):
     code = generate_activation_code()

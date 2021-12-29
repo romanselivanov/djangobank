@@ -1,6 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext
@@ -16,7 +15,7 @@ class CustomUserManager(BaseUserManager):
         """
         if not phone:
             raise ValueError('Phone must be set')
-        if not email: 
+        if not email:
             raise ValueError('Email must be set')
 
         email = self.normalize_email(email)
@@ -33,7 +32,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, phone, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        
+
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
@@ -50,19 +49,19 @@ class CustomUserManager(BaseUserManager):
 class PasswordCharsValidator:
     """
     Validate whether the password has upper, lower and digit.
-    """ 
+    """
     def validate(self, password, user=None):
 
         if not any(char.isdigit() for char in password):
             raise ValidationError(
                 gettext('Password should have at least one numeral'),
                 code='password_nothave_numeral',)
-         
+
         if not any(char.isupper() for char in password):
             raise ValidationError(
                 gettext('Password should have at least one uppercase letter'),
                 code='password_nothave_uppercase',)
-            
+
         if not any(char.islower() for char in password):
             raise ValidationError(
                 gettext('Password should have at least one lowercase letter'),
@@ -84,17 +83,18 @@ class NezbankModelPermission(DjangoModelPermissions):
     }
 
     def has_permission(self, request, view):
-        groups = [group.name for group in request.user.groups.all()]
         if not request.user or not request.user.is_authenticated:
             return False
 
         queryset = self._queryset(view)
         perms = self.get_required_permissions(request.method, queryset.model)
-        if 'accounts_view_all' in groups:
-            return request.user.has_perms(perms)
+        return request.user.has_perms(perms)
 
-        if 'account_self' in groups and \
-            str(queryset)==str(queryset.filter(customer=request.user)):
-            return request.user.has_perms(perms)
+    def has_object_permission(self, request, view, obj):
+        if not request.user or not request.user.is_authenticated:
+            return False
 
-        return False
+        queryset = self._queryset(view)
+        model_cls = queryset.model
+        perms = self.get_required_permissions(request.method, model_cls)
+        return request.user.has_perms(perms)

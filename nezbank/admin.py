@@ -13,30 +13,27 @@ class AccountAdmin(UserAdmin):
     list_display = ('email', 'phone', 'date_joined', 'is_active')
 
     fieldsets = (
-        (None, 
-        {'fields': (
-            'email', 
-            'password', 
-            'phone', 
-            'email_status'
-            )}),
-        ('Personal info', 
-        {'fields': (
-            'first_name', 
-            'last_name', 
-            'patronymic_name', 
-            'date_joined'
-            )}),
-        ('Permissions', 
-        {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')}),
+        (None, {
+            'fields': (
+                'email', 'password', 'phone', 'email_status'
+                )}),
+        ('Personal info', {
+            'fields': (
+                'first_name', 'last_name', 'patronymic_name', 'date_joined'
+                )}),
+        ('Permissions', {
+            'fields': (
+                'is_active', 'is_staff', 'is_superuser', 'groups'
+                )}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'phone', 'password1', 'password2')}
-        ),
+            'fields': (
+                'email', 'phone', 'password1', 'password2'
+                )}),
     )
     search_fields = ('email',)
     ordering = ('email',)
