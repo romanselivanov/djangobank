@@ -60,7 +60,7 @@ class AccountType(models.Model):
     currency = models.CharField(max_length=50, verbose_name="Валюта")
     value = models.DecimalField(
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
         verbose_name="Курс"
         )
 
@@ -82,7 +82,7 @@ class Account(models.Model):
         )
     rate = models.DecimalField(
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
         verbose_name="Средств на счете")
     type = models.ForeignKey(
         AccountType,

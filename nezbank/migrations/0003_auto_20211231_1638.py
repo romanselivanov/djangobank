@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='account',
             name='rate',
-            field=models.DecimalField(decimal_places=4, max_digits=10, verbose_name='Средств на счете'),
+            field=models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Средств на счете'),
         ),
         migrations.AlterField(
             model_name='accounttype',
@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='accounttype',
             name='value',
-            field=models.DecimalField(decimal_places=4, max_digits=10, verbose_name='Курс'),
+            field=models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Курс'),
         ),
     ]
