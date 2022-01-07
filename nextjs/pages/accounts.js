@@ -2,6 +2,7 @@ import styles from "../styles/Index.module.scss";
 import * as apiAccounts from '../api/accounts'
 import { useState, useEffect } from 'react';
 
+
 const Accounts = () => {
   const [accounts, setAccounts] = useState(null);
 

@@ -1,3 +1,3 @@
-import { apiNonCache } from "./index"
+import api from "./index"
 
-export const list = () => apiNonCache.get(`accounts/`);
+export const list = () => api.get(`accounts/`);

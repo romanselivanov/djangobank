@@ -111,7 +111,9 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'nezbank.User'
 REST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'nezbank.serializers.LoginSerializer'
+    'LOGIN_SERIALIZER': 'nezbank.serializers.LoginSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'nezbank.serializers.PasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'nezbank.serializers.PasswordResetConfirmSerializer',
     }
 
 REST_USE_JWT = True
@@ -126,6 +128,17 @@ JWT_AUTH_SAMESITE = None
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_VERIFICATION_URL = "http://localhost:8000/email-verification/"
 EMAIL_FROM = 'no-reply@testbank.ru'
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+            }
+        }
+}
 
 # SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
 # if SENTRY_DSN:

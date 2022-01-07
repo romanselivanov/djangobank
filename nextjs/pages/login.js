@@ -4,7 +4,7 @@ import { Formik, Field, Form } from 'formik';
 
 const handleClick = (e) =>  {
     apiAuth.logout().then(({data}) => {
-        console.log(data);
+        alert('success logout');
     }).catch((error) => {
         console.log(error)
     });
@@ -19,6 +19,7 @@ const ContactForm = (
 
         onSubmit={(values) => {
             apiAuth.login(values.username, values.password).then(({data}) => {
+                alert('success login')
             }).catch((error) => {
                 console.log(error)
             });

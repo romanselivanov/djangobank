@@ -1,11 +1,15 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from nezbank.authutils import NezbankModelPermission
 from rest_framework.permissions import IsAuthenticated
-from .serializers import AccountSerializer, AccountTypeSerializer
+from .serializers import (
+    AccountSerializer, AccountTypeSerializer, VerificationCodeSerializer
+    )
 from nezbank.models import Account, AccountType
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .filters import AccountPermissionFilter
+from .models import User
+from .services import code_generator
 
 
 class AccountsView(ModelViewSet):
@@ -38,3 +42,20 @@ class AccountsView(ModelViewSet):
         accounttypes = self.get_queryset()
         serializer = self.get_serializer(accounttypes, many=True)
         return Response(serializer.data)
+
+
+class EmailVerificationView(GenericViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = VerificationCodeSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        code = code_generator.check_token(user=user, token=serializer.data['code'])
+        if code:
+            user.email_status = User.EmailStatus.VERIFIED
+            user.save()
+            return Response(status=200)
+        else:
+            return Response(status=400)

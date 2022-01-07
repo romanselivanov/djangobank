@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import User, Account, AccountType
+from .models import User, Account, AccountType, VerifyCode
 from django.contrib.auth.admin import UserAdmin
 from .forms import UserChangeForm, UserCreationForm
 
 
 @admin.register(User)
-class AccountAdmin(UserAdmin):
+class CustomerAdmin(UserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
@@ -40,5 +40,16 @@ class AccountAdmin(UserAdmin):
     filter_horizontal = ()
 
 
-admin.site.register(Account)
-admin.site.register(AccountType)
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'created_at', 'rate', 'type')
+
+
+@admin.register(AccountType)
+class AccountTypeAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'value', 'id')
+
+
+@admin.register(VerifyCode)
+class VerifyCodeAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'created')

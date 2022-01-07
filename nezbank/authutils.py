@@ -1,9 +1,9 @@
-from django.contrib.auth.base_user import BaseUserManager
-from django.db.models import Q
-from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext
 from rest_framework.permissions import DjangoModelPermissions
+from django.contrib.auth.base_user import BaseUserManager
+from django.db.models import Q
+from django.contrib.auth.hashers import make_password
 
 
 class CustomUserManager(BaseUserManager):
