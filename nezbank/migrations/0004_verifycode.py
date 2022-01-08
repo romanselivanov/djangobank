@@ -4,6 +4,22 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
+
+
+def add_task(apps, schema_editor):
+    PeriodicTask.objects.create(
+        name='update actual currency',
+        task='nezbank.tasks.check_currency',
+        crontab=CrontabSchedule.objects.get_or_create(
+            minute='0',
+            hour='2',
+            day_of_week='*',
+            day_of_month='*',
+            month_of_year='*',
+            timezone='Europe/Moscow',
+        )[0],
+    )
 
 
 class Migration(migrations.Migration):
@@ -17,9 +33,13 @@ class Migration(migrations.Migration):
             name='VerifyCode',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.IntegerField(null=True)),
+                ('code', models.CharField(max_length=6, null=True)),
                 ('created', models.DateTimeField(default=django.utils.timezone.now)),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='otp', to=settings.AUTH_USER_MODEL, verbose_name='Клиент')),
             ],
+        ),
+        migrations.RunPython(
+            add_task,
+            reverse_code=migrations.RunPython.noop
         ),
     ]

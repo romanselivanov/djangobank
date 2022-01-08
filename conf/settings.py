@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     
     'nezbank',
     'corsheaders',
+    'django_celery_beat',
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
@@ -78,10 +79,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
-    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
-    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
-    { 'NAME': 'nezbank.authutils.PasswordCharsValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {'NAME': 'nezbank.authutils.PasswordCharsValidator'},
 ]
 
 
@@ -138,6 +139,22 @@ SWAGGER_SETTINGS = {
             'in': 'header'
             }
         }
+}
+
+CELERY = {
+    'broker_url': 'redis://localhost:6379',
+    'enable_utc': False,
+    'timezone': TIME_ZONE,
+    'accept_content': ['json'],
+    'task_serializer': 'json',
+    'result_serializer': 'json',
+    'worker_disable_rate_limits': False,
+    'worker_pool_restarts': True,
+    'worker_concurrency': 1,
+    'result_backend': 'redis://localhost:6379',
+    'result_extended': True,
+    'result_expires': 60 * 60 * 4,
+    'beat_scheduler': 'django_celery_beat.schedulers:DatabaseScheduler',
 }
 
 # SENTRY_DSN = os.environ.get('SENTRY_DSN', None)

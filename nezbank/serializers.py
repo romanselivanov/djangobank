@@ -1,4 +1,3 @@
-from django import http
 from rest_framework import serializers
 from .models import Account, AccountType
 from dj_rest_auth.serializers import LoginSerializer as DefaultLoginSerializer
@@ -6,7 +5,7 @@ from dj_rest_auth.serializers import (
     PasswordResetSerializer as DefaultPasswordResetSerializer)
 from dj_rest_auth.serializers import (
     PasswordResetConfirmSerializer as DefaultPasswordResetConfirmSerializer)
-from .services import code_generator
+from .services import token_generator
 from django.conf import settings
 from django.utils.http import urlsafe_base64_decode as uid_decoder
 from django.utils.encoding import force_str
@@ -50,7 +49,7 @@ class AccountTypeSerializer(serializers.ModelSerializer):
 
 
 class VerificationCodeSerializer(serializers.Serializer):
-    code = serializers.IntegerField(required=True)
+    token = serializers.CharField(required=True, max_length=6, min_length=6)
 
 
 class PasswordResetSerializer(DefaultPasswordResetSerializer):
@@ -65,7 +64,7 @@ class PasswordResetSerializer(DefaultPasswordResetSerializer):
             'use_https': request.is_secure(),
             'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
             'request': request,
-            'token_generator': code_generator,
+            'token_generator': token_generator,
         }
         opts.update(self.get_email_options())
         self.reset_form.save(**opts)
@@ -80,7 +79,7 @@ class PasswordResetConfirmSerializer(DefaultPasswordResetConfirmSerializer):
         except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
             raise ValidationError({'uid': ['Invalid value']})
 
-        if not code_generator.check_token(self.user, attrs['token']):
+        if not token_generator.check_token(self.user, attrs['token']):
             raise ValidationError({'token': ['Invalid value']})
 
         self.custom_validation(attrs)

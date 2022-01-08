@@ -62,7 +62,7 @@ class VerifyCode(models.Model):
         on_delete=CASCADE,
         verbose_name="Клиент"
         )
-    code = models.IntegerField(blank=False, null=True)
+    code = models.CharField(max_length=6, blank=False, null=True)
     created = models.DateTimeField(default=timezone.now)
 
     def save(self, **kwargs):

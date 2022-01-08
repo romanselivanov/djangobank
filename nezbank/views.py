@@ -9,7 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .filters import AccountPermissionFilter
 from .models import User
-from .services import code_generator
+from .services import token_generator
+from django.utils.translation import gettext_lazy as _
 
 
 class AccountsView(ModelViewSet):
@@ -52,10 +53,16 @@ class EmailVerificationView(GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        code = code_generator.check_token(user=user, token=serializer.data['code'])
-        if code:
+        token = token_generator.check_token(
+            user=user,
+            token=serializer.data['token']
+            )
+        if token:
             user.email_status = User.EmailStatus.VERIFIED
             user.save()
-            return Response(status=200)
+            return Response({'detail': _('Email verified')},)
         else:
-            return Response(status=400)
+            return Response(
+                {'detail': _('Entered digits incorrect')},
+                status=400
+                )

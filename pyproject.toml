@@ -16,6 +16,11 @@ djangorestframework-simplejwt = "^4.8.0"
 psycopg2-binary = "2.8.5"
 factory-boy = "^3.2.1"
 django-cors-headers = "^3.10.1"
+requests = "^2.27.1"
+xmltodict = "^0.12.0"
+celery = "^5.2.3"
+django-celery-beat = "^2.2.1"
+redis = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
 python-dotenv = "^0.19.2"

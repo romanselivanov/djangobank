@@ -8,19 +8,19 @@ from django.conf import settings
 class VerificationCodeGenerator:
 
     def make_token(self, user):
-        code = int(''.join([str(random.randint(0, 10)) for _ in range(6)]))
-        VerifyCode.objects.create(customer=user, code=code)
-        return code
+        token = int(''.join([str(random.randint(0, 10)) for _ in range(6)]))
+        VerifyCode.objects.create(customer=user, code=token)
+        return token
 
     def check_token(self, user, token):
-        return True if VerifyCode.objects.get(customer=user, code=token) else False
+        return VerifyCode.objects.filter(customer=user, code=token).exists()
 
 
-code_generator = VerificationCodeGenerator()
+token_generator = VerificationCodeGenerator()
 
 
 def send_email_verification(user):
-    code = code_generator.make_token(user)
+    code = token_generator.make_token(user)
     url = settings.EMAIL_VERIFICATION_URL + str(code)
     params = dict(user=user, url=url)
     msg_txt = get_template("registration/email_verification.txt").render(params)

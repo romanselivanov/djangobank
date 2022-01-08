@@ -14,3 +14,7 @@ cd nextjs
 npm i  
 npm run dev  
 dev фронт http://127.0.0.1:3000 (не localhost)  для работы аутентификации  
+
+celery -A conf worker -l info --pool=solo  
+(--pool=solo for windows dev only)  
+celery -A conf beat -l info  
