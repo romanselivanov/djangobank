@@ -1,19 +1,14 @@
 from rest_framework.filters import BaseFilterBackend
-
-
-def accounts_view_all(user):
-    return user.groups.filter(name='accounts_view_all').exists()
-
-
-def account_self(user):
-    return user.groups.filter(name='account_self').exists()
+from django.db import connection
 
 
 class AccountPermissionFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         user = request.user
-        if accounts_view_all(user):
+        print(len(connection.queries))
+        if 'view_all_accounts' in user.roles:
+            print('view_all_accounts')
             return queryset
 
         return queryset.filter(customer=user)

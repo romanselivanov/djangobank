@@ -4,6 +4,9 @@ from django.db.models.deletion import CASCADE, DO_NOTHING
 from .authutils import CustomUserManager
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from rolepermissions.roles import get_user_roles
+import inflection
+from django.utils.functional import cached_property
 
 
 class User(AbstractUser):
@@ -44,6 +47,13 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['phone']
 
     objects = CustomUserManager()
+
+    @cached_property
+    def roles(self):
+        try:
+            return [inflection.underscore(role.__name__) for role in get_user_roles(self)]
+        except Exception:
+            return ''
 
     def save(self, **kwargs):
         if self.email_status != self.EmailStatus.NOT_VERIFIED:

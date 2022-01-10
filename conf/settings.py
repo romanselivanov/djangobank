@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     
     'nezbank',
     'corsheaders',
+    'rolepermissions',
     'django_celery_beat',
     'rest_framework',
     'rest_framework.authtoken',
@@ -156,6 +157,8 @@ CELERY = {
     'result_expires': 60 * 60 * 4,
     'beat_scheduler': 'django_celery_beat.schedulers:DatabaseScheduler',
 }
+
+ROLEPERMISSIONS_MODULE = 'conf.roles'
 
 # SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
 # if SENTRY_DSN:

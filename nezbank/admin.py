@@ -2,10 +2,11 @@ from django.contrib import admin
 from .models import User, Account, AccountType, VerifyCode
 from django.contrib.auth.admin import UserAdmin
 from .forms import UserChangeForm, UserCreationForm
+from rolepermissions.admin import RolePermissionsUserAdminMixin
 
 
 @admin.register(User)
-class CustomerAdmin(UserAdmin):
+class CustomerAdmin(RolePermissionsUserAdminMixin, UserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
