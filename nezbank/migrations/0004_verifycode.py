@@ -38,6 +38,11 @@ class Migration(migrations.Migration):
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='otp', to=settings.AUTH_USER_MODEL, verbose_name='Клиент')),
             ],
         ),
+        migrations.AlterField(
+            model_name='account',
+            name='type',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='accounts', to='nezbank.accounttype', verbose_name='Тип валюты'),
+        ),
         migrations.RunPython(
             add_task,
             reverse_code=migrations.RunPython.noop

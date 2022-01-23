@@ -112,7 +112,8 @@ class Account(models.Model):
     type = models.ForeignKey(
         AccountType,
         on_delete=DO_NOTHING,
-        verbose_name="Тип валюты"
+        verbose_name="Тип валюты",
+        related_name='accounts'
         )
 
     def __str__(self):

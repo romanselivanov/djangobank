@@ -1,4 +1,4 @@
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 from nezbank.authutils import NezbankModelPermission
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (
@@ -11,38 +11,31 @@ from .filters import AccountPermissionFilter
 from .models import User
 from .services import token_generator
 from django.utils.translation import gettext_lazy as _
+from rest_framework.mixins import (
+    CreateModelMixin, RetrieveModelMixin, ListModelMixin
+)
 
 
-class AccountsView(ModelViewSet):
-    serializers = {
-        'default': AccountSerializer,
-        'accounttypes_list': AccountTypeSerializer,
-        }
+class AccountsView(
+    CreateModelMixin, RetrieveModelMixin, ListModelMixin, GenericViewSet
+    ):
+    # serializers = {
+    #     'default': AccountSerializer,
+    #     'accounttypes_list': AccountTypeSerializer,
+    #     }
+    serializer_class = AccountSerializer
     filter_backends = (AccountPermissionFilter,)
+    queryset = Account.objects.all()
+    permission_classes = [NezbankModelPermission]
+
+
+class AccountTypeView(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountTypeSerializer
+    lookup_url_kwarg = 'id'
 
     def get_queryset(self):
-        if self.action == 'accounttypes_list':
-            return AccountType.objects.all()
-        else:
-            return Account.objects.all()
-
-    def get_permissions(self):
-        if self.action == 'accounttypes_list':
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [NezbankModelPermission]
-        return [permission() for permission in permission_classes]
-
-    def get_serializer_class(self):
-        return self.serializers.get(
-            self.action,  self.serializers['default']
-        )
-
-    @action(methods=['get'], url_path='accountypes', detail=False)
-    def accounttypes_list(self, request, **kwargs):
-        accounttypes = self.get_queryset()
-        serializer = self.get_serializer(accounttypes, many=True)
-        return Response(serializer.data)
+        return AccountType.objects.filter(accounts=self.kwargs['pk'])
 
 
 class EmailVerificationView(GenericViewSet):

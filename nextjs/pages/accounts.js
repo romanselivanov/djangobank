@@ -9,10 +9,8 @@ const Accounts = () => {
   useEffect(() => {
     apiAccounts.list(`accounts/`).then((response) => {
       setAccounts(response.data);
-    }).catch((error) => {
-      console.log(error)
-    });
-  }, []);
+    }).catch((error) => {});
+  }, [accounts]);
 
   return (
     <div className={styles.wrapper}>
