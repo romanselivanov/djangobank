@@ -5,8 +5,9 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-!&9y0b^^=&8-g+qh(0xugg8r%245aq+-w12@qkt+k@%2+x&d1r'
+
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ALLOWED_HOSTS = ['*']
 
@@ -76,8 +77,6 @@ DATABASES = {
         'HOST': os.environ.get('POSTGRES_HOST'),
     }
 }
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -93,13 +92,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-DEBUG = True
 
 SWAGGER_SETTINGS = {
    'USE_SESSION_AUTH': False
@@ -143,7 +138,7 @@ SWAGGER_SETTINGS = {
 }
 
 CELERY = {
-    'broker_url': 'redis://localhost:6379',
+    'broker_url': 'redis://redis:6379',
     'enable_utc': False,
     'timezone': TIME_ZONE,
     'accept_content': ['json'],
@@ -152,7 +147,7 @@ CELERY = {
     'worker_disable_rate_limits': False,
     'worker_pool_restarts': True,
     'worker_concurrency': 1,
-    'result_backend': 'redis://localhost:6379',
+    'result_backend': 'redis://redis:6379',
     'result_extended': True,
     'result_expires': 60 * 60 * 4,
     'beat_scheduler': 'django_celery_beat.schedulers:DatabaseScheduler',

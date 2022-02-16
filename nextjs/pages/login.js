@@ -26,25 +26,25 @@ const ContactForm = (
         }}
     >
         <Form>
-            <Field id="username" name="username" placeholder="email или телефон" />
-            <Field type="password" id="password" name="password" placeholder="пароль" />
+            <p><Field id="username" name="username" placeholder="email или телефон" /></p>
+            <p><Field type="password" id="password" name="password" placeholder="пароль" /></p>
             <button type="submit">Login</button>
-            <div style={{paddingTop: '50px'}}>
-               {/* <Link href="/password-reset/">
-                   <a>Забыли пароль?</a>
-                </Link> */}
-            </div>
         </Form>
     </Formik>
 );
 
 export default function LoginForm() {
     return (
-        <div>
+        <div style={{textAlign: 'center'}}>
           <h2>Login</h2>
           {ContactForm}
-          <div style={{paddingTop: '50px'}}>
-            <button onClick={handleClick}>logout</button>
+          <div style={{paddingTop: '20px'}}>
+            <button onClick={handleClick}>Logout</button>
+          </div>
+          <div style={{paddingTop: '15px'}}>
+            <Link href="/password-reset/">
+                <a>Забыли пароль?</a>
+            </Link>
           </div>
         </div>
       );

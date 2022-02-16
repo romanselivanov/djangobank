@@ -1,0 +1,11 @@
+stages:
+  - deploy
+
+Deploy:
+  stage: deploy
+  script:
+    - docker-compose -p djangobank -f docker-compose.yml up -d --build  
+  tags:
+    - deploy
+  only:
+    - release

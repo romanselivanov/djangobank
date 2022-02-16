@@ -1,4 +1,4 @@
-"""dosn't support multiple url kwargs with same name
+"""doesn't support multiple url kwargs with same name
 """
 from rest_framework.routers import SimpleRouter, DefaultRouter
 

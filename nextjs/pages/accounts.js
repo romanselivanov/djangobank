@@ -15,9 +15,11 @@ const Accounts = () => {
   return (
     <div className={styles.wrapper}>
       <h2>Аккаунты: </h2>
-      {accounts && accounts.map(({description, rate, type}) => (
-        <ul key={type}>баланс: {rate} описание: {description} тип: {type}</ul>
-      ))}
+      <div>
+        {accounts && accounts.map(({description, rate, type}) => (
+          <ul key={type}>баланс: {rate} описание: {description} тип: {type}</ul>
+        ))}
+      </div>
     </div>
   );
 }
